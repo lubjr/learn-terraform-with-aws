@@ -51,9 +51,3 @@ variable "public_key_path" {
   type        = string
   default     = "~/.ssh/id_ed25519.pub"
 }
-
-variable "bucket_prefix" {
-  description = "Prefix for the S3 bucket name (AWS appends a unique suffix)"
-  type        = string
-  default     = "learn-terraform-"
-}
