@@ -6,12 +6,14 @@
 
 The resources were chosen to stay within or close to the [Free Tier](https://aws.amazon.com/free/), but that depends on your account. The EC2 instance is the resource most likely to incur charges if left running. **Always run `terraform destroy` when you are done.**
 
+The DynamoDB table uses on-demand capacity, so it costs nothing while idle beyond storage. Point-in-time recovery is disabled by default because its backups are billed separately.
+
 ## Destroying a stack
 
 Run it inside the stack folder:
 
 ```bash
-cd ec2           # or s3, or lambda
+cd ec2           # or s3, lambda, dynamodb
 terraform destroy
 ```
 

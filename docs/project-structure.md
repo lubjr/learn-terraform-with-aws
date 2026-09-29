@@ -15,6 +15,8 @@
 │   ├── src/index.mjs
 │   ├── iam.tf
 │   └── main.tf
+├── dynamodb/             # DynamoDB table
+│   └── main.tf
 └── docs/
     ├── icons/            # official AWS Architecture Icons
     ├── stacks/           # one page per stack
@@ -23,7 +25,7 @@
 
 ## Independent stacks
 
-Each top-level folder (`ec2/`, `s3/`, `lambda/`) is a separate Terraform root module. It has its own providers, variables, outputs and state file, and it does not reference resources from the other stacks. You run `terraform init` and `terraform apply` inside the folder you want to deploy.
+Each top-level folder (`ec2/`, `s3/`, `lambda/`, `dynamodb/`) is a separate Terraform root module. It has its own providers, variables, outputs and state file, and it does not reference resources from the other stacks. You run `terraform init` and `terraform apply` inside the folder you want to deploy.
 
 ## File convention
 

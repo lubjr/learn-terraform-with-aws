@@ -14,6 +14,7 @@ Each service lives in its own **independent stack**: a folder with its own confi
 | <img src="docs/icons/lambda.svg" width="40" alt="AWS Lambda"> | AWS Lambda | [`lambda/`](docs/stacks/lambda.md) | Node.js function that returns a "Hello" message |
 | <img src="docs/icons/iam.svg" width="40" alt="AWS IAM"> | AWS IAM | [`lambda/`](docs/stacks/lambda.md) | Lambda execution role |
 | <img src="docs/icons/cloudwatch.svg" width="40" alt="Amazon CloudWatch"> | Amazon CloudWatch | [`lambda/`](docs/stacks/lambda.md) | Lambda log group with 14-day retention |
+| <img src="docs/icons/dynamodb.svg" width="40" alt="Amazon DynamoDB"> | Amazon DynamoDB | [`dynamodb/`](docs/stacks/dynamodb.md) | On-demand table with `pk`/`sk` keys and TTL |
 
 ## Diagram
 
@@ -46,9 +47,14 @@ flowchart LR
         fn --> logs
     end
 
+    subgraph dynamodbstack["Stack dynamodb/"]
+        table[(DynamoDB table<br/>on-demand)]
+    end
+
     user -- SSH --> igw
     user -- AWS CLI / Console --> bucket
     user -- aws lambda invoke --> fn
+    user -- AWS CLI --> table
 ```
 
 ## Quick start
@@ -57,7 +63,7 @@ With [Terraform](https://developer.hashicorp.com/terraform/install) and the [AWS
 
 ```bash
 git clone https://github.com/lubjr/learn-terraform-with-aws.git
-cd learn-terraform-with-aws/s3   # or ec2, or lambda
+cd learn-terraform-with-aws/s3   # or ec2, lambda, dynamodb
 terraform init
 terraform apply
 terraform destroy                # when you are done
@@ -74,4 +80,5 @@ See [Getting started](docs/getting-started.md) for the full setup.
 | [EC2 stack](docs/stacks/ec2.md) | VPC networking and an SSH-reachable instance |
 | [S3 stack](docs/stacks/s3.md) | Private S3 bucket |
 | [Lambda stack](docs/stacks/lambda.md) | Node.js function with IAM role and CloudWatch logs |
+| [DynamoDB stack](docs/stacks/dynamodb.md) | On-demand table with composite key and TTL |
 | [Costs and cleanup](docs/costs-and-cleanup.md) | Free Tier notes, destroying resources and local state caveats |
