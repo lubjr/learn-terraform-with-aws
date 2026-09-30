@@ -11,9 +11,10 @@ Each service lives in its own **independent stack**: a folder with its own confi
 | <img src="docs/icons/ec2.svg" width="40" alt="Amazon EC2"> | Amazon EC2 | [`ec2/`](docs/stacks/ec2.md) | `t3.micro` instance (Ubuntu) reachable over SSH |
 | <img src="docs/icons/vpc.svg" width="40" alt="Amazon VPC"> | Amazon VPC | [`ec2/`](docs/stacks/ec2.md) | VPC, public subnet, Internet Gateway, route table and security group |
 | <img src="docs/icons/s3.svg" width="40" alt="Amazon S3"> | Amazon S3 | [`s3/`](docs/stacks/s3.md) | Private bucket with all public access blocked |
-| <img src="docs/icons/lambda.svg" width="40" alt="AWS Lambda"> | AWS Lambda | [`lambda/`](docs/stacks/lambda.md) | Node.js function that returns a "Hello" message |
-| <img src="docs/icons/iam.svg" width="40" alt="AWS IAM"> | AWS IAM | [`lambda/`](docs/stacks/lambda.md) | Lambda execution role |
-| <img src="docs/icons/cloudwatch.svg" width="40" alt="Amazon CloudWatch"> | Amazon CloudWatch | [`lambda/`](docs/stacks/lambda.md) | Lambda log group with 14-day retention |
+| <img src="docs/icons/lambda.svg" width="40" alt="AWS Lambda"> | AWS Lambda | [`lambda/`](docs/stacks/lambda.md) | Node.js functions: `hello` (on demand) and `heartbeat` (scheduled) |
+| <img src="docs/icons/iam.svg" width="40" alt="AWS IAM"> | AWS IAM | [`lambda/`](docs/stacks/lambda.md) | Lambda execution role and scheduler role |
+| <img src="docs/icons/cloudwatch.svg" width="40" alt="Amazon CloudWatch"> | Amazon CloudWatch | [`lambda/`](docs/stacks/lambda.md) | One log group per function with 14-day retention |
+| <img src="docs/icons/eventbridge.svg" width="40" alt="Amazon EventBridge"> | Amazon EventBridge Scheduler | [`lambda/`](docs/stacks/lambda.md) | Runs `heartbeat` every 5 minutes |
 | <img src="docs/icons/dynamodb.svg" width="40" alt="Amazon DynamoDB"> | Amazon DynamoDB | [`dynamodb/`](docs/stacks/dynamodb.md) | On-demand table with `pk`/`sk` keys and TTL |
 
 ## Diagram
@@ -40,11 +41,16 @@ flowchart LR
 
     subgraph lambdastack["Stack lambda/"]
         direction TB
-        fn[Lambda<br/>Node.js]
+        hello[Lambda hello<br/>Node.js]
+        heartbeat[Lambda heartbeat<br/>Node.js]
+        scheduler[EventBridge Scheduler<br/>every 5 min]
         role[IAM Role]
         logs[CloudWatch Logs]
-        role -. assumed by .-> fn
-        fn --> logs
+        role -. assumed by .-> hello
+        role -. assumed by .-> heartbeat
+        scheduler --> heartbeat
+        hello --> logs
+        heartbeat --> logs
     end
 
     subgraph dynamodbstack["Stack dynamodb/"]
@@ -53,7 +59,7 @@ flowchart LR
 
     user -- SSH --> igw
     user -- AWS CLI / Console --> bucket
-    user -- aws lambda invoke --> fn
+    user -- aws lambda invoke --> hello
     user -- AWS CLI --> table
 ```
 
@@ -79,6 +85,6 @@ See [Getting started](docs/getting-started.md) for the full setup.
 | [Project structure](docs/project-structure.md) | Folder layout and the file convention shared by every stack |
 | [EC2 stack](docs/stacks/ec2.md) | VPC networking and an SSH-reachable instance |
 | [S3 stack](docs/stacks/s3.md) | Private S3 bucket |
-| [Lambda stack](docs/stacks/lambda.md) | Node.js function with IAM role and CloudWatch logs |
+| [Lambda stack](docs/stacks/lambda.md) | Node.js functions with IAM roles, CloudWatch logs and a schedule |
 | [DynamoDB stack](docs/stacks/dynamodb.md) | On-demand table with composite key and TTL |
 | [Costs and cleanup](docs/costs-and-cleanup.md) | Free Tier notes, destroying resources and local state caveats |

@@ -11,10 +11,13 @@
 │   └── ...
 ├── s3/                   # private S3 bucket
 │   └── main.tf
-├── lambda/               # Lambda function + IAM + CloudWatch
-│   ├── src/index.mjs
+├── lambda/               # Lambda functions + IAM + CloudWatch + Scheduler
+│   ├── src/
+│   │   ├── hello/index.mjs
+│   │   └── heartbeat/index.mjs
 │   ├── iam.tf
-│   └── main.tf
+│   ├── main.tf
+│   └── schedule.tf
 ├── dynamodb/             # DynamoDB table
 │   └── main.tf
 └── docs/

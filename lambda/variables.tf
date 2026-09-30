@@ -4,10 +4,27 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "function_name" {
-  description = "Name of the Lambda function"
+variable "name_prefix" {
+  description = "Prefix for the function names and the shared IAM roles"
   type        = string
-  default     = "learn-terraform-hello"
+  default     = "learn-terraform"
+}
+
+variable "functions" {
+  description = "Functions to deploy, keyed by the folder name under src/. Set schedule to run the function on an EventBridge Scheduler expression"
+  type = map(object({
+    description = string
+    schedule    = optional(string)
+  }))
+  default = {
+    hello = {
+      description = "Returns a greeting for the given name"
+    }
+    heartbeat = {
+      description = "Logs a heartbeat on a fixed schedule"
+      schedule    = "rate(5 minutes)"
+    }
+  }
 }
 
 variable "runtime" {
