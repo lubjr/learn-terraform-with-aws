@@ -16,6 +16,8 @@ Each service lives in its own **independent stack**: a folder with its own confi
 | <img src="docs/icons/cloudwatch.svg" width="40" alt="Amazon CloudWatch"> | Amazon CloudWatch | [`lambda/`](docs/stacks/lambda.md) | One log group per function with 14-day retention |
 | <img src="docs/icons/eventbridge.svg" width="40" alt="Amazon EventBridge"> | Amazon EventBridge Scheduler | [`lambda/`](docs/stacks/lambda.md) | Runs `heartbeat` every 5 minutes |
 | <img src="docs/icons/dynamodb.svg" width="40" alt="Amazon DynamoDB"> | Amazon DynamoDB | [`dynamodb/`](docs/stacks/dynamodb.md) | On-demand table with `pk`/`sk` keys and TTL |
+| <img src="docs/icons/sns.svg" width="40" alt="Amazon SNS"> | Amazon SNS | [`sns-sqs/`](docs/stacks/sns-sqs.md) | Topic that fans out messages to the queues |
+| <img src="docs/icons/sqs.svg" width="40" alt="Amazon SQS"> | Amazon SQS | [`sns-sqs/`](docs/stacks/sns-sqs.md) | Queues `all` and `high-priority` (filtered), each with a dead-letter queue |
 
 ## Diagram
 
@@ -57,10 +59,23 @@ flowchart LR
         table[(DynamoDB table<br/>on-demand)]
     end
 
+    subgraph snssqsstack["Stack sns-sqs/"]
+        direction TB
+        topic[SNS topic]
+        qall[SQS all]
+        qhigh[SQS high-priority]
+        dlq[SQS dead-letter queues]
+        topic --> qall
+        topic -- priority = high --> qhigh
+        qall -.-> dlq
+        qhigh -.-> dlq
+    end
+
     user -- SSH --> igw
     user -- AWS CLI / Console --> bucket
     user -- aws lambda invoke --> hello
     user -- AWS CLI --> table
+    user -- aws sns publish --> topic
 ```
 
 ## Quick start
@@ -69,7 +84,7 @@ With [Terraform](https://developer.hashicorp.com/terraform/install) and the [AWS
 
 ```bash
 git clone https://github.com/lubjr/learn-terraform-with-aws.git
-cd learn-terraform-with-aws/s3   # or ec2, lambda, dynamodb
+cd learn-terraform-with-aws/s3   # or ec2, lambda, dynamodb, sns-sqs
 terraform init
 terraform apply
 terraform destroy                # when you are done
@@ -87,4 +102,5 @@ See [Getting started](docs/getting-started.md) for the full setup.
 | [S3 stack](docs/stacks/s3.md) | Private S3 bucket |
 | [Lambda stack](docs/stacks/lambda.md) | Node.js functions with IAM roles, CloudWatch logs and a schedule |
 | [DynamoDB stack](docs/stacks/dynamodb.md) | On-demand table with composite key and TTL |
+| [SNS + SQS stack](docs/stacks/sns-sqs.md) | Topic fan-out to filtered queues with dead-letter queues |
 | [Costs and cleanup](docs/costs-and-cleanup.md) | Free Tier notes, destroying resources and local state caveats |

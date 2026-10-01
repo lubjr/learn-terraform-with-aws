@@ -8,12 +8,14 @@ The resources were chosen to stay within or close to the [Free Tier](https://aws
 
 The DynamoDB table uses on-demand capacity, so it costs nothing while idle beyond storage. Point-in-time recovery is disabled by default because its backups are billed separately.
 
+The SNS topic and SQS queues cost nothing while idle. The Free Tier covers 1 million SNS publishes and 1 million SQS requests a month.
+
 ## Destroying a stack
 
 Run it inside the stack folder:
 
 ```bash
-cd ec2           # or s3, lambda, dynamodb
+cd ec2           # or s3, lambda, dynamodb, sns-sqs
 terraform destroy
 ```
 

@@ -67,13 +67,14 @@ Every stack accepts `aws_region` (default `us-east-1`). The variables specific t
 - [S3 stack](stacks/s3.md#variables)
 - [Lambda stack](stacks/lambda.md#variables)
 - [DynamoDB stack](stacks/dynamodb.md#variables)
+- [SNS + SQS stack](stacks/sns-sqs.md#variables)
 
 ## 5. Deploy a stack
 
 Go into the service folder and run:
 
 ```bash
-cd s3            # or ec2, lambda, dynamodb
+cd s3            # or ec2, lambda, dynamodb, sns-sqs
 terraform init   # downloads the providers (first time only)
 terraform plan   # shows what will be created
 terraform apply  # creates the resources (confirm with "yes")

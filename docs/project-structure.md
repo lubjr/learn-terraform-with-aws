@@ -20,6 +20,9 @@
 │   └── schedule.tf
 ├── dynamodb/             # DynamoDB table
 │   └── main.tf
+├── sns-sqs/              # SNS topic fanning out to SQS queues
+│   ├── sns.tf
+│   └── sqs.tf
 └── docs/
     ├── icons/            # official AWS Architecture Icons
     ├── stacks/           # one page per stack
@@ -28,7 +31,7 @@
 
 ## Independent stacks
 
-Each top-level folder (`ec2/`, `s3/`, `lambda/`, `dynamodb/`) is a separate Terraform root module. It has its own providers, variables, outputs and state file, and it does not reference resources from the other stacks. You run `terraform init` and `terraform apply` inside the folder you want to deploy.
+Each top-level folder (`ec2/`, `s3/`, `lambda/`, `dynamodb/`, `sns-sqs/`) is a separate Terraform root module. It has its own providers, variables, outputs and state file, and it does not reference resources from the other stacks. You run `terraform init` and `terraform apply` inside the folder you want to deploy.
 
 ## File convention
 
