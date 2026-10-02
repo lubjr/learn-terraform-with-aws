@@ -10,12 +10,14 @@ The DynamoDB table uses on-demand capacity, so it costs nothing while idle beyon
 
 The SNS topic and SQS queues cost nothing while idle. The Free Tier covers 1 million SNS publishes and 1 million SQS requests a month.
 
+The HTTP API is billed per request and costs nothing while idle. It is public, so destroy it when you are done; its throttling settings keep an unexpected burst of traffic from running up the bill.
+
 ## Destroying a stack
 
 Run it inside the stack folder:
 
 ```bash
-cd ec2           # or s3, lambda, dynamodb, sns-sqs
+cd ec2           # or s3, lambda, dynamodb, sns-sqs, api
 terraform destroy
 ```
 

@@ -18,6 +18,7 @@ Each service lives in its own **independent stack**: a folder with its own confi
 | <img src="docs/icons/dynamodb.svg" width="40" alt="Amazon DynamoDB"> | Amazon DynamoDB | [`dynamodb/`](docs/stacks/dynamodb.md) | On-demand table with `pk`/`sk` keys and TTL |
 | <img src="docs/icons/sns.svg" width="40" alt="Amazon SNS"> | Amazon SNS | [`sns-sqs/`](docs/stacks/sns-sqs.md) | Topic that fans out messages to the queues |
 | <img src="docs/icons/sqs.svg" width="40" alt="Amazon SQS"> | Amazon SQS | [`sns-sqs/`](docs/stacks/sns-sqs.md) | Queues `all` and `high-priority` (filtered), each with a dead-letter queue |
+| <img src="docs/icons/api-gateway.svg" width="40" alt="Amazon API Gateway"> | Amazon API Gateway | [`api/`](docs/stacks/api.md) | HTTP API with CRUD routes backed by a Node.js Lambda and a DynamoDB table |
 
 ## Diagram
 
@@ -71,11 +72,20 @@ flowchart LR
         qhigh -.-> dlq
     end
 
+    subgraph apistack["Stack api/"]
+        direction TB
+        httpapi[API Gateway<br/>HTTP API]
+        itemsfn[Lambda items<br/>Node.js]
+        itemstable[(DynamoDB<br/>api-items)]
+        httpapi --> itemsfn --> itemstable
+    end
+
     user -- SSH --> igw
     user -- AWS CLI / Console --> bucket
     user -- aws lambda invoke --> hello
     user -- AWS CLI --> table
     user -- aws sns publish --> topic
+    user -- HTTPS / curl --> httpapi
 ```
 
 ## Quick start
@@ -84,7 +94,7 @@ With [Terraform](https://developer.hashicorp.com/terraform/install) and the [AWS
 
 ```bash
 git clone https://github.com/lubjr/learn-terraform-with-aws.git
-cd learn-terraform-with-aws/s3   # or ec2, lambda, dynamodb, sns-sqs
+cd learn-terraform-with-aws/s3   # or ec2, lambda, dynamodb, sns-sqs, api
 terraform init
 terraform apply
 terraform destroy                # when you are done
@@ -103,4 +113,5 @@ See [Getting started](docs/getting-started.md) for the full setup.
 | [Lambda stack](docs/stacks/lambda.md) | Node.js functions with IAM roles, CloudWatch logs and a schedule |
 | [DynamoDB stack](docs/stacks/dynamodb.md) | On-demand table with composite key and TTL |
 | [SNS + SQS stack](docs/stacks/sns-sqs.md) | Topic fan-out to filtered queues with dead-letter queues |
+| [API Gateway stack](docs/stacks/api.md) | HTTP API with CRUD routes, a Node.js Lambda and a DynamoDB table |
 | [Costs and cleanup](docs/costs-and-cleanup.md) | Free Tier notes, destroying resources and local state caveats |
